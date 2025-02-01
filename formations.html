@@ -207,8 +207,10 @@
 
         <!-- تشكيلة حسين -->
         <div class="formation-card">
-            <img src="WhatsApp Image 2025-02-01 at 18.25.38_5d72844a.jpg" >
-            <h3>تشكيلة حسين</h3>
+            <img src="WhatsApp Image 2025-02-01 at 18.25.38_5d72844a.jpg" 
+            style="width: 100%; height: 300px; border: 5px solid #008000; border-radius: 15px; cursor: pointer;" 
+            onclick="document.getElementById('audio3').play();"  >
+            <h1>تشكيلة حسين</h1>
         </div>
 
         <!-- خط فاصل -->
@@ -216,16 +218,37 @@
 
         <!-- تشكيلة محمد -->
         <div class="formation-card">
-            <img src="WhatsApp Image 2025-02-01 at 18.25.39_292f1d7e.jpg" >
-            <h3>تشكيلة محمد</h3>
+            <img src="WhatsApp Image 2025-02-01 at 18.25.39_292f1d7e.jpg"
+            style="width: 100%; height: 300px; border: 5px solid #008000; border-radius: 15px; cursor: pointer;" 
+            onclick="document.getElementById('audio2').play();"
+        >
+            <h1>تشكيلة محمد</h1>
         </div>
 
         <div class="formation-card">
 
 
             <div></div>
-            <img src="بقيلة.jpg" >
-            <h3>تشكيلة بقيلة</h3>
+
+
+            <img id="بقيلة" src="بقيلة.jpg" 
+            style="width: 100%; height: 300px; border: 5px solid #008000; border-radius: 15px; cursor: pointer;" 
+    onclick="document.getElementById('audio1').play();"
+
+            >
+            <h1>تشكيلة بقيلة</h1>
+
+
+            <!-- إضافة ملف الصوت -->
+
+
+<audio id="audio1" src="WhatsApp Audio 2025-02-01 at 19.36.27_1c3d9212.mp3"></audio>
+<audio id="audio2" src="WhatsApp Audio 2025-02-01 at 19.54.25_4a761a43.dat.mp3"></audio>
+<audio id="audio3" src="WhatsApp Audio 2025-02-01 at 19.58.24_7008135a.mp3"></audio>
+<!-- الصورة الأصلية مع تشغيل الصوت عند النقر -->
+
+    
+    
         </div>
     </div>
 
@@ -247,6 +270,7 @@
          
         </ul>
     </nav>
+>
 
 </body>
 </html>
