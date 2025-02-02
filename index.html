@@ -1,0 +1,271 @@
+<!-- الصفحة الرئيسية (index.html) -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرئيسية - موقع الأخبار الفلسطيني HMB</title>
+    <style>
+        /* تنسيقات عامة */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        /* رأس الصفحة */
+        header {
+            background: linear-gradient(to right, #008000, #000000);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        header p {
+            margin: 5px 0 0;
+            font-size: 18px;
+        }
+
+        /* شريط التنقل */
+        nav {
+            background-color: #ffffff;
+            padding: 10px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+            position: relative;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #008000;
+            font-weight: bold;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul li a:hover {
+            color: #000000;
+        }
+
+        /* إضافة أيقونة الملعب بجانب "تشكيلات" */
+        .stadium-icon {
+            width: 20px;
+            height: 20px;
+            background-color: #008000;
+            clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
+            margin-left: 5px;
+        }
+
+        /* إضافة أيقونة الجوهرة بجانب "الرئيسية" */
+        .diamond-icon {
+            width: 15px;
+            height: 15px;
+            background-color: #ff9800;
+            transform: rotate(45deg);
+            margin-left: 5px;
+        }
+
+        /* إضافة أيقونة الهاتف بجانب "اتصل بنا" */
+        .phone-icon {
+            width: 20px;
+            height: 20px;
+            background-color: #000000;
+            border-radius: 5px;
+            position: relative;
+            margin-left: 5px;
+        }
+
+        .phone-icon::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px;
+            height: 5px;
+            background-color: #ffffff;
+            border-radius: 50%;
+        }
+
+        /* القسم الرئيسي */
+        .main-section {
+            padding: 20px;
+        }
+
+        .news-card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .news-card h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #008000;
+        }
+
+        .news-card p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* إضافة مثلث التحذير */
+        .warning-triangle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 60px;
+            height: 60px;
+            background-color: #ff4d4d;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        /* إضافة مثلث القلق */
+        .concern-triangle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 60px;
+            height: 60px;
+            background-color: #ff9800;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        /* إضافة مثلث السعادة */
+        .happy-triangle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 60px;
+            height: 60px;
+            background-color: #4caf50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        /* تذييل الصفحة */
+        footer {
+            background-color: #000000;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- رأس الصفحة -->
+    <header>
+        <h1>موقع الأخبار الفلسطيني HMB</h1>
+        <p>نبض فلسطين في كل مكان</p>
+    </header>
+
+    <!-- شريط التنقل -->
+    <nav>
+        <ul style="display: flex; justify-content: center; align-items: center;">
+            <li>
+                <a href="formations.html">تشكيلات <span class="stadium-icon"></span></a>
+            </li>
+            <li>
+                <a href="index.html">الرئيسية <span class="diamond-icon"></span></a>
+            </li>
+            <li>
+                <a href="contact.html">اتصل بنا <span class="phone-icon"></span></a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- القسم الرئيسي -->
+    <div class="main-section">
+        <div class="news-card">
+            <div class="warning-triangle">خطير</div>
+            <h2>رسميا !!! 
+                بقيلة مفلس </h2>
+            <p> بقيلة في حاله يرثى لها مفلس لا امل 
+                هل يستطيع ان يتخطى هذي المرحله !
+            </p>
+        </div>
+
+        <div class="news-card">
+            <div class="concern-triangle">قلق</div>
+            <h2>محمد وماسكيرانو</h2>
+            <p>قصة حب لا تنتهي! 18 ماسكيرانو في جعبته، سلاح كيميائي ينتظر التفعيل.</p>
+        </div>
+
+        <div class="news-card">
+            <div class="happy-triangle">سعيد</div>
+            <h2>حسين في حيرة من أمره</h2>
+            <p>بعد خطة محكمة ومدبرة، حسين يعيد زين الدين زيدان إلى صفوفه ويحتفظ بـ 400 مليون في جعبته للاستثمار.</p>
+        </div>
+    </div>
+
+    <!-- تذييل الصفحة -->
+    <footer>
+        <p>&copy; 2023 موقع الأخبار الفلسطيني HMB. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <nav>
+        <ul style="display: flex; justify-content: center; align-items: center;">
+            <li>
+                <a href="formations.html">تشكيلات <span class="stadium-icon"></span></a>
+            </li>
+            <li>
+                <a href="index.html">الرئيسية <span class="diamond-icon"></span></a>
+            </li>
+            <li>
+                
+        </ul>
+    </nav>
+
+</body>
+</html>
