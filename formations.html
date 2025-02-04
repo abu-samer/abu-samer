@@ -62,9 +62,21 @@
         </div>
 
         <!-- ملفات الصوت -->
-        <audio id="audio1" src="بقيلة.mp3"></audio>
-        <audio id="audio2" src="محمد.mp3"></audio>
-        <audio id="audio3" src="حسين.mp3"></audio>
+        <audio id="audio1">
+            <source src="بقيلة.mp3" type="audio/mpeg">
+            <source src="بقيلة.ogg" type="audio/ogg">
+            Your browser does not support the audio element.
+        </audio>
+        <audio id="audio2">
+            <source src="محمد.mp3" type="audio/mpeg">
+            <source src="محمد.ogg" type="audio/ogg">
+            Your browser does not support the audio element.
+        </audio>
+        <audio id="audio3">
+            <source src="حسين.mp3" type="audio/mpeg">
+            <source src="حسين.ogg" type="audio/ogg">
+            Your browser does not support the audio element.
+        </audio>
     </div>
 
     <!-- تذييل الصفحة -->
@@ -74,25 +86,26 @@
 
     <!-- JavaScript لإدارة تشغيل الأصوات -->
     <script>
-        // متغير لتخزين العنصر الصوتي قيد التشغيل حاليًا
         let currentAudio = null;
 
-        // دالة لتشغيل الصوت وإيقاف الصوت السابق إذا كان قيد التشغيل
         function playSound(audioId) {
-            // الحصول على العنصر الصوتي المطلوب
             const audio = document.getElementById(audioId);
 
-            // إذا كان هناك صوت قيد التشغيل، نوقفه
-            if (currentAudio && currentAudio !== audio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0; // إعادة المؤقت إلى البداية
+            if (!audio) {
+                console.error(`لم يتم العثور على العنصر الصوتي مع ID: ${audioId}`);
+                return;
             }
 
-            // تحديث العنصر الصوتي الحالي
+            if (currentAudio && currentAudio !== audio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+
             currentAudio = audio;
 
-            // تشغيل الصوت المطلوب
-            audio.play();
+            audio.play().catch(error => {
+                console.error("حدث خطأ أثناء تشغيل الصوت:", error);
+            });
         }
     </script>
 </body>
