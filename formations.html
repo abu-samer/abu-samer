@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تشكـيلات - موقع الأخبار الفلسطيني HMB</title>
+    <style>
+        /* التنسيقات كما هي في الكود الأصلي */
+    </style>
+</head>
+<body>
+    <!-- رأس الصفحة -->
+    <header>
+        <h1>موقع الأخبار الفلسطيني HMB</h1>
+        <p>نبض فلسطين في كل مكان</p>
+    </header>
+
+    <!-- شريط التنقل -->
+    <nav>
+        <ul style="display: flex; justify-content: center; align-items: center;">
+            <li>
+                <a href="formations.html">تشكيلات <span class="stadium-icon"></span></a>
+            </li>
+            <li>
+                <a href="index.html">الرئيسية <span class="diamond-icon"></span></a>
+            </li>
+            <li>
+                <a href="contact.html">اتصل بنا <span class="phone-icon"></span></a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- صفحة التشكيلات -->
+    <div class="formations-page">
+        <h1>تشكـيلات</h1>
+
+        <!-- تشكيلة حسين -->
+        <div class="formation-card">
+            <img src="حسين.jpg" 
+                 style="width: 100%; height: 300px; border: 5px solid #008000; border-radius: 15px; cursor: pointer;" 
+                 onclick="playSound('audio3')">
+            <h1>تشكيلة حسين</h1>
+        </div>
+
+        <!-- خط فاصل -->
+        <div class="divider"></div>
+
+        <!-- تشكيلة محمد -->
+        <div class="formation-card">
+            <img src="محمد.jpg"
+                 style="width: 100%; height: 300px; border: 5px solid #008000; border-radius: 15px; cursor: pointer;" 
+                 onclick="playSound('audio2')">
+            <h1>تشكيلة محمد</h1>
+        </div>
+
+        <!-- تشكيلة بقيلة -->
+        <div class="formation-card">
+            <img id="بقيلة" src="بقيلة.jpg" 
+                 style="width: 100%; height: 300px; border: 5px solid #008000; border-radius: 15px; cursor: pointer;" 
+                 onclick="playSound('audio1')">
+            <h1>تشكيلة بقيلة</h1>
+        </div>
+
+        <!-- ملفات الصوت -->
+        <audio id="audio1" src="بقيلة.mp3"></audio>
+        <audio id="audio2" src="محمد.mp3"></audio>
+        <audio id="audio3" src="حسين.mp3"></audio>
+    </div>
+
+    <!-- تذييل الصفحة -->
+    <footer>
+        <p>&copy; 2023 موقع الأخبار الفلسطيني HMB. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <!-- JavaScript لإدارة تشغيل الأصوات -->
+    <script>
+        // متغير لتخزين العنصر الصوتي قيد التشغيل حاليًا
+        let currentAudio = null;
+
+        // دالة لتشغيل الصوت وإيقاف الصوت السابق إذا كان قيد التشغيل
+        function playSound(audioId) {
+            // الحصول على العنصر الصوتي المطلوب
+            const audio = document.getElementById(audioId);
+
+            // إذا كان هناك صوت قيد التشغيل، نوقفه
+            if (currentAudio && currentAudio !== audio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0; // إعادة المؤقت إلى البداية
+            }
+
+            // تحديث العنصر الصوتي الحالي
+            currentAudio = audio;
+
+            // تشغيل الصوت المطلوب
+            audio.play();
+        }
+    </script>
+</body>
+</html>
