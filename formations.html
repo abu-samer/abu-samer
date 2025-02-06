@@ -6,6 +6,104 @@
     <title>تشكـيلات - موقع الأخبار الفلسطيني HMB</title>
     <style>
         /* التنسيقات كما هي في الكود الأصلي */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #008000;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+        nav ul li a {
+            color: #008000;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .formations-page {
+            padding: 20px;
+        }
+        .formation-card {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .divider {
+            border-bottom: 2px solid #008000;
+            margin: 20px 0;
+        }
+        footer {
+            background-color: #008000;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        /* تنسيقات حاسبة الفيفا */
+        .fifa-calculator {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .fifa-calculator h2 {
+            color: #008000;
+            text-align: center;
+        }
+        .fifa-calculator label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        .fifa-calculator select,
+        .fifa-calculator input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .fifa-calculator button {
+            background-color: #008000;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .fifa-calculator button:hover {
+            background-color: #006400;
+        }
+        .fifa-calculator .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            color: #008000;
+        }
+        .player-input {
+            margin-bottom: 10px;
+        }
+        .player-input label {
+            font-weight: bold;
+            color: #008000;
+        }
     </style>
 </head>
 <body>
@@ -77,6 +175,32 @@
             <source src="حسين.ogg" type="audio/ogg">
             Your browser does not support the audio element.
         </audio>
+
+        <!-- حاسبة الفيفا -->
+        <div class="fifa-calculator">
+            <h2>حاسبة تشكيلة الفيفا</h2>
+            <form id="fifaForm">
+                <label for="formation">اختر التشكيلة:</label>
+                <select id="formation" required onchange="updatePlayerInputs()">
+                    <option value="">-- اختر التشكيلة --</option>
+                    <option value="4-3-3">4-3-3</option>
+                    <option value="4-4-2">4-4-2</option>
+                    <option value="3-5-2">3-5-2</option>
+                    <option value="4-2-3-1">4-2-3-1</option>
+                    <option value="5-3-2">5-3-2</option>
+                    <option value="4-1-2-1-2">4-1-2-1-2</option>
+                    <option value="4-3-2-1">4-3-2-1</option>
+                    <option value="3-4-3">3-4-3</option>
+                    <option value="5-4-1">5-4-1</option>
+                </select>
+
+                <!-- Player Inputs Will Be Dynamically Added Here -->
+                <div id="playerInputs"></div>
+
+                <button type="submit">حساب التقييم العام</button>
+            </form>
+            <div class="result" id="result"></div>
+        </div>
     </div>
 
     <!-- تذييل الصفحة -->
@@ -84,7 +208,7 @@
         <p>&copy; 2023 موقع الأخبار الفلسطيني HMB. جميع الحقوق محفوظة.</p>
     </footer>
 
-    <!-- JavaScript لإدارة تشغيل الأصوات -->
+    <!-- JavaScript لإدارة تشغيل الأصوات وحاسبة الفيفا -->
     <script>
         let currentAudio = null;
 
@@ -106,6 +230,87 @@
             audio.play().catch(error => {
                 console.error("حدث خطأ أثناء تشغيل الصوت:", error);
             });
+        }
+
+        // FIFA Formation Calculator Logic
+        const formationPositions = {
+            '4-3-3': ['GK', 'RB', 'CB', 'CB', 'LB', 'CDM', 'CM', 'CAM', 'RW', 'ST', 'LW'],
+            '4-4-2': ['GK', 'RB', 'CB', 'CB', 'LB', 'RM', 'CM', 'CM', 'LM', 'ST', 'ST'],
+            '3-5-2': ['GK', 'CB', 'CB', 'CB', 'RM', 'CM', 'CM', 'LM', 'CAM', 'ST', 'ST'],
+            '4-2-3-1': ['GK', 'RB', 'CB', 'CB', 'LB', 'CDM', 'CDM', 'CAM', 'RAM', 'LAM', 'ST'],
+            '5-3-2': ['GK', 'RWB', 'CB', 'CB', 'CB', 'LWB', 'CM', 'CM', 'CM', 'ST', 'ST'],
+            '4-1-2-1-2': ['GK', 'RB', 'CB', 'CB', 'LB', 'CDM', 'CM', 'CM', 'CAM', 'ST', 'ST'],
+            '4-3-2-1': ['GK', 'RB', 'CB', 'CB', 'LB', 'CM', 'CM', 'CM', 'RF', 'LF', 'ST'],
+            '3-4-3': ['GK', 'CB', 'CB', 'CB', 'RM', 'CM', 'CM', 'LM', 'RW', 'ST', 'LW'],
+            '5-4-1': ['GK', 'RWB', 'CB', 'CB', 'CB', 'LWB', 'RM', 'CM', 'LM', 'ST'],
+        };
+
+        function updatePlayerInputs() {
+            const formation = document.getElementById('formation').value;
+            const playerInputs = document.getElementById('playerInputs');
+            playerInputs.innerHTML = ''; // Clear previous inputs
+
+            if (!formation) return;
+
+            const positions = formationPositions[formation];
+            positions.forEach((pos, index) => {
+                const div = document.createElement('div');
+                div.className = 'player-input';
+                div.innerHTML = `
+                    <label>${pos} (اللاعب ${index + 1}):</label>
+                    <input type="number" placeholder="أدخل التقييم" required>
+                `;
+                playerInputs.appendChild(div);
+            });
+        }
+
+        document.getElementById('fifaForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formation = document.getElementById('formation').value;
+            const inputs = document.querySelectorAll('#playerInputs input');
+            const players = Array.from(inputs).map(input => Number(input.value));
+
+            if (players.length !== 11) {
+                alert("يجب إدخال 11 لاعبًا.");
+                return;
+            }
+
+            const ovr = calculateFifaOVR(formation, players);
+            document.getElementById('result').innerText = `التقييم العام: ${ovr}`;
+        });
+
+        function calculateFifaOVR(formation, players) {
+            const weights = {
+                '4-3-3': { def: 0.25, mid: 0.25, att: 0.35, gk: 0.15 },
+                '4-4-2': { def: 0.30, mid: 0.40, att: 0.20, gk: 0.10 },
+                '3-5-2': { def: 0.20, mid: 0.50, att: 0.20, gk: 0.10 },
+                '4-2-3-1': { def: 0.25, mid: 0.35, att: 0.30, gk: 0.10 },
+                '5-3-2': { def: 0.35, mid: 0.35, att: 0.20, gk: 0.10 },
+                '4-1-2-1-2': { def: 0.30, mid: 0.40, att: 0.20, gk: 0.10 },
+                '4-3-2-1': { def: 0.25, mid: 0.35, att: 0.30, gk: 0.10 },
+                '3-4-3': { def: 0.20, mid: 0.40, att: 0.30, gk: 0.10 },
+                '5-4-1': { def: 0.40, mid: 0.40, att: 0.10, gk: 0.10 },
+            };
+
+            if (!weights[formation]) {
+                alert("التشكيلة غير مدعومة.");
+                return;
+            }
+
+            const { def, mid, att, gk: gkWeight } = weights[formation];
+
+            const gk = players[0];
+            const defenders = players.slice(1, formationPositions[formation].indexOf('RM') || formationPositions[formation].indexOf('CM'));
+            const midfielders = players.slice(defenders.length + 1, formationPositions[formation].indexOf('ST'));
+            const attackers = players.slice(defenders.length + midfielders.length + 1);
+
+            const defAvg = defenders.reduce((a, b) => a + b, 0) / defenders.length;
+            const midAvg = midfielders.reduce((a, b) => a + b, 0) / midfielders.length;
+            const attAvg = attackers.reduce((a, b) => a + b, 0) / attackers.length;
+
+            const ovr = (defAvg * def) + (midAvg * mid) + (attAvg * att) + (gk * gkWeight);
+            return ovr.toFixed(1);
         }
     </script>
 </body>
