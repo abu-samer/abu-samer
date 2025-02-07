@@ -132,27 +132,20 @@
   <!-- صفحة التشكيلات -->
   <div class="formations-page">
     <h1>تشكـيلات</h1>
-
-    <!-- تشكيلة حسين -->
+    <!-- أمثلة للتشكيلات -->
     <div class="formation-card">
       <img src="IMG_20250206_213639.jpg" 
            style="width: 100%; height: 300px; border: 5px solid #008000; border-radius: 15px; cursor: pointer;" 
            onclick="playSound('audio3')">
       <h1>تشكيلة حسين</h1>
     </div>
-
-    <!-- خط فاصل -->
     <div class="divider"></div>
-
-    <!-- تشكيلة محمد -->
     <div class="formation-card">
       <img src="محمد.jpg"
            style="width: 100%; height: 300px; border: 5px solid #008000; border-radius: 15px; cursor: pointer;" 
            onclick="playSound('audio2')">
       <h1>تشكيلة محمد</h1>
     </div>
-
-    <!-- تشكيلة بقيلة -->
     <div class="formation-card">
       <img id="بقيلة" src="Screenshot_2025-02-06-21-29-27-239_com.ea.gp.fifamobile-edit.jpg" 
            style="width: 100%; height: 300px; border: 5px solid #008000; border-radius: 15px; cursor: pointer;" 
@@ -189,7 +182,10 @@
           <option value="3-5-2">3-5-2</option>
           <option value="4-2-3-1">4-2-3-1</option>
           <option value="5-3-2">5-3-2</option>
+          <!-- التشكيلة الأصلية -->
           <option value="4-1-2-1-2">4-1-2-1-2</option>
+          <!-- التشكيلة الجديدة مع RM و LM بدل CM -->
+          <option value="4-1-2-1-2-RM-LM">4-1-2-1-2 (RM/LM)</option>
           <option value="4-3-2-1">4-3-2-1</option>
           <option value="3-4-3">3-4-3</option>
           <option value="5-4-1">5-4-1</option>
@@ -207,7 +203,6 @@
   <!-- JavaScript لإدارة تشغيل الأصوات وحاسبة الفيفا -->
   <script>
     let currentAudio = null;
-
     function playSound(audioId) {
       const audio = document.getElementById(audioId);
       if (!audio) {
@@ -224,19 +219,23 @@
       });
     }
 
-    // منطق حاسبة تشكيلات الفيفا
+    // خريطة مراكز التشكيلة مع خيار التشكيلة الجديدة "4-1-2-1-2-RM-LM"
     const formationPositions = {
       '4-3-3': ['GK', 'RB', 'CB', 'CB', 'LB', 'CDM', 'CM', 'CAM', 'RW', 'ST', 'LW'],
       '4-4-2': ['GK', 'RB', 'CB', 'CB', 'LB', 'RM', 'CM', 'CM', 'LM', 'ST', 'ST'],
       '3-5-2': ['GK', 'CB', 'CB', 'CB', 'RM', 'CM', 'CM', 'LM', 'CAM', 'ST', 'ST'],
       '4-2-3-1': ['GK', 'RB', 'CB', 'CB', 'LB', 'CDM', 'CDM', 'CAM', 'RAM', 'LAM', 'ST'],
       '5-3-2': ['GK', 'RWB', 'CB', 'CB', 'CB', 'LWB', 'CM', 'CM', 'CM', 'ST', 'ST'],
+      // التشكيلة الأصلية "4-1-2-1-2" تستخدم CM مرتين:
       '4-1-2-1-2': ['GK', 'RB', 'CB', 'CB', 'LB', 'CDM', 'CM', 'CM', 'CAM', 'ST', 'ST'],
+      // التشكيلة الجديدة "4-1-2-1-2-RM-LM" تستخدم RM و LM بدلاً من CM:
+      '4-1-2-1-2-RM-LM': ['GK', 'RB', 'CB', 'CB', 'LB', 'CDM', 'RM', 'LM', 'CAM', 'ST', 'ST'],
       '4-3-2-1': ['GK', 'RB', 'CB', 'CB', 'LB', 'CM', 'CM', 'CM', 'RF', 'LF', 'ST'],
       '3-4-3': ['GK', 'CB', 'CB', 'CB', 'RM', 'CM', 'CM', 'LM', 'RW', 'ST', 'LW'],
       '5-4-1': ['GK', 'RWB', 'CB', 'CB', 'CB', 'LWB', 'RM', 'CM', 'LM', 'ST']
     };
 
+    // دالة لإضافة حقول اللاعبين مع اختيار "المركز الأساسي" (اختياري)
     function updatePlayerInputs() {
       const formation = document.getElementById('formation').value;
       const playerInputs = document.getElementById('playerInputs');
@@ -245,17 +244,24 @@
       if (!formation) return;
 
       const positions = formationPositions[formation];
+      // قائمة الخيارات للمراكز الأساسية (اختياري)
+      let preferredOptions = '<option value="">-- لا يوجد --</option>';
+      const availablePositions = ['GK','RB','CB','LB','CDM','CM','CAM','RM','LM','RW','ST','LW'];
+      availablePositions.forEach(pos => {
+        preferredOptions += `<option value="${pos}">${pos}</option>`;
+      });
+
       positions.forEach((pos, index) => {
         const div = document.createElement('div');
         div.className = 'player-input';
 
-        // إنشاء خيارات الـ Base OVR من 100 إلى 107
+        // خيارات الـ Base OVR من 100 إلى 107
         let baseOptions = '<option value="">-- اختر الأوفر --</option>';
         for (let ovr = 100; ovr <= 107; ovr++) {
           baseOptions += `<option value="${ovr}">${ovr}</option>`;
         }
 
-        // إنشاء خيارات الـ Rank Up من 1 إلى 5
+        // خيارات الـ Rank Up من 1 إلى 5
         let rankOptions = '<option value="">-- اختر الرنك --</option>';
         for (let rank = 1; rank <= 5; rank++) {
           rankOptions += `<option value="${rank}">${rank}</option>`;
@@ -265,32 +271,103 @@
           <label>${pos} (اللاعب ${index + 1}):</label>
           <select required class="base-ovr">${baseOptions}</select>
           <select required class="rank-up">${rankOptions}</select>
+          <select class="preferred-pos">${preferredOptions}</select>
         `;
         playerInputs.appendChild(div);
       });
     }
 
+    // دالة لتحديد قيمة العقوبة بناءً على قيمة الرانك
+    function getPenalty(rank) {
+      if (rank == 5) return 0;
+      else if (rank == 4) return 2;
+      else if (rank == 3) return 3;
+      else if (rank == 2) return 4;
+      else if (rank == 1 || rank == 0) return 6;
+      else return 0;
+    }
+
+    // دالة لحساب التقييم العام مع احتساب المراكز الفرعية وعقوبة اللعب خارج المركز الأساسي (إذا تم اختيارها)
+    function calculateFifaOVR(baseValues, rankValues, preferredValues, formation) {
+      const positions = formationPositions[formation];
+      // خريطة لتصنيف المراكز الفرعية:
+      const subPositionsMapping = {
+        'GK': 'GK',
+        'RB': 'Def', 'CB': 'Def', 'LB': 'Def', 'RWB': 'Def', 'LWB': 'Def',
+        'CDM': 'Mid', 'CM': 'Mid', 'CAM': 'Mid', 'RM': 'Mid', 'LM': 'Mid', 'RAM': 'Mid', 'LAM': 'Mid',
+        'RW': 'Att', 'ST': 'Att', 'LW': 'Att', 'RF': 'Att', 'LF': 'Att'
+      };
+
+      // تجميع تقييمات اللاعبين بحسب المجموعات الفرعية
+      let groups = {
+        'GK': [],
+        'Def': [],
+        'Mid': [],
+        'Att': []
+      };
+
+      for (let i = 0; i < positions.length; i++) {
+        const formationPos = positions[i];
+        const playerBase = baseValues[i];
+        const playerRank = rankValues[i];
+        const preferredPos = preferredValues[i]; // قد تكون فارغة
+        let playerRating = playerBase + playerRank;
+        // إذا تم اختيار المركز الأساسي وكان مختلفاً عن مركز التشكيلة:
+        if (preferredPos !== "") {
+          // الحصول على العقوبة وفقًا لقيمة الرانك
+          let penalty = getPenalty(playerRank);
+          if (preferredPos !== formationPos) {
+            playerRating = Math.max(playerRating - penalty, 0);
+          }
+        }
+        const subGroup = subPositionsMapping[formationPos] || 'Mid';
+        groups[subGroup].push(playerRating);
+      }
+
+      // دالة لحساب المتوسط
+      function avg(arr) {
+        return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+      }
+
+      const avgGK = avg(groups['GK']);
+      const avgDef = avg(groups['Def']);
+      const avgMid = avg(groups['Mid']);
+      const avgAtt = avg(groups['Att']);
+
+      // تحديد أوزان المجموعات الفرعية
+      const weightGK = 1.0;
+      const weightDef = 1.1;
+      const weightMid = 1.0;
+      const weightAtt = 1.2;
+
+      const overall = (avgGK * weightGK + avgDef * weightDef + avgMid * weightMid + avgAtt * weightAtt) /
+                      (weightGK + weightDef + weightMid + weightAtt);
+      return Math.round(overall);
+    }
+
     document.getElementById('fifaForm').addEventListener('submit', function (e) {
       e.preventDefault();
 
+      const formationValue = document.getElementById('formation').value;
       const baseSelects = document.querySelectorAll('.base-ovr');
       const rankSelects = document.querySelectorAll('.rank-up');
+      const preferredSelects = document.querySelectorAll('.preferred-pos');
 
       const baseValues = Array.from(baseSelects).map(select => Number(select.value));
       const rankValues = Array.from(rankSelects).map(select => Number(select.value));
+      const preferredValues = Array.from(preferredSelects).map(select => select.value);
 
-      // التحقق من صحة الإدخالات
+      // التحقق من صحة الإدخالات بالنسبة للأوفر والرنك فقط
       if (baseValues.includes(NaN) || rankValues.includes(NaN)) {
         alert('يرجى تحديد الأوفر والرنك لجميع اللاعبين.');
         return;
       }
-
       if (baseValues.length !== 11 || rankValues.length !== 11) {
         alert('يجب إدخال 11 لاعبًا.');
         return;
       }
 
-      const ovr = calculateFifaOVR(baseValues, rankValues);
+      const ovr = calculateFifaOVR(baseValues, rankValues, preferredValues, formationValue);
       document.getElementById('result').innerText = `التقييم العام: ${ovr}`;
 
       // إخفاء حقول الإدخال وعرض النتيجة في الوسط
@@ -298,13 +375,6 @@
       document.getElementById('formation').classList.add('hidden');
       document.getElementById('result').classList.add('center-result');
     });
-
-    function calculateFifaOVR(baseValues, rankValues) {
-      // حساب المتوسطات مع التقريب
-      const avgBase = Math.ceil(baseValues.reduce((a, b) => a + b, 0) / 11);
-      const avgRank = Math.ceil(rankValues.reduce((a, b) => a + b, 0) / 11);
-      return avgBase + avgRank;
-    }
   </script>
 </body>
 </html>
