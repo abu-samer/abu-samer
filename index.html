@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <title>📢 موقعي الإخباري</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      direction: rtl;
+      overflow: hidden;
+      background: #7665e321;
+      color: #333;
+    }
+
+    #header {
+      border-radius: 0px 600px 600px 10px;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 60px;
+      background: #bbbbbbf6;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      z-index: 1000;
+      direction: ltr;
+    }
+    #channel-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-left: 10px;
+    }
+    #channel-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.1;
+    }
+    #channel-name {
+      margin-left: 25px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #222;
+      margin-bottom: 0;
+    }
+    #live-info {
+      font-size: 1rem;
+      color: #333;
+      margin-left: 210px;
+      margin-top: -25px;
+      line-height: 1.2;
+      text-align: left;
+    }
+
+    #news-container {
+      padding-top: 60px;
+      height: 100vh;
+      overflow-y: auto;
+      padding-left: 20px;
+      padding-right: 20px;
+      background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0,0,0,0.3)),
+        url('/static/download (1).jpeg') repeat;
+      background-size: auto;
+      background-attachment: local;
+    }
+
+    #news-content {
+      display: flex;
+      flex-direction: column-reverse;
+      position: relative;
+      z-index: 2;
+    }
+
+    .news-card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.95);
+      margin: 10px 0;
+      padding: 12px;
+      border-radius: 18px 18px 0px 18px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+      max-width: 70%;
+      align-self: flex-end;
+      direction: rtl;
+      word-wrap: break-word;
+      font-size: 1.1rem;
+      font-weight: 500;
+      line-height: 1.5;
+      color: #333;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .news-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    /* توست */
+    #toast {
+      visibility: hidden;
+      min-width: 100px;
+      background-color: #4BB543; /* أخضر */
+      color: white;
+      text-align: center;
+      border-radius: 25px;
+      padding: 12px 24px;
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.1rem;
+      font-weight: 700;
+      z-index: 1500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out, visibility 0.3s;
+    }
+
+    #toast.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    #toast svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+  </style>
+</head>
+<body>
+  <div id="header">
+    <img src="/static/Screenshot 2025-07-12 175456.png" alt="قناة الأخبار" id="channel-avatar">
+    <div id="channel-info">
+      <p id="channel-name">📢 ابو سامر الإخبارية</p>
+      <p id="live-info">
+        <span id="live-date"></span><br />
+        <span id="live-time"></span>
+      </p>
+    </div>
+  </div>
+
+  <div id="news-container">
+    <div id="news-content"></div>
+  </div>
+
+  <!-- التوست -->
+  <div id="toast">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+    </svg>
+    تم النسخ!
+  </div>
+
+  <script>
+    const newsContent = document.getElementById('news-content');
+    const newsContainer = document.getElementById('news-container');
+    const toast = document.getElementById('toast');
+    let firstLoad = true;
+    let toastTimeout;
+
+    function showToast() {
+      clearTimeout(toastTimeout);
+      toast.classList.add('show');
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    function renderNews(news) {
+      newsContent.innerHTML = '';
+      news.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'news-card';
+        div.textContent = item;
+
+        div.addEventListener('click', () => {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(item)
+              .then(() => showToast())
+              .catch(() => fallbackCopyTextToClipboard(item));
+          } else {
+            fallbackCopyTextToClipboard(item);
+          }
+        });
+
+        newsContent.appendChild(div);
+      });
+
+      if (firstLoad) {
+        newsContainer.scrollTop = newsContainer.scrollHeight;
+        firstLoad = false;
+      }
+    }
+
+    function fallbackCopyTextToClipboard(text) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";  // عشان ما يسبب سكرول
+      textArea.style.left = "-9999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        if (successful) {
+          showToast();
+        } else {
+          alert('❌ فشل النسخ!');
+        }
+      } catch (err) {
+        document.body.removeChild(textArea);
+        alert('❌ فشل النسخ!');
+      }
+    }
+
+    async function fetchNews() {
+      try {
+        const response = await fetch('/api/news');
+        if (!response.ok) throw new Error('فشل تحميل الأخبار');
+        const data = await response.json();
+        renderNews(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchNews();
+    setInterval(fetchNews, 2000);
+
+    function updateDateTime() {
+      const now = new Date();
+      const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+      const dateString = now.toLocaleDateString('ar-EG', dateOptions);
+      let hours = now.getHours() % 12;
+      if (hours === 0) hours = 12;
+      let minutes = now.getMinutes();
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      const timeString = `${hours}:${minutes}`;
+      document.getElementById('live-date').textContent = dateString;
+      document.getElementById('live-time').textContent = timeString;
+    }
+
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+  </script>
+</body>
+</html>
