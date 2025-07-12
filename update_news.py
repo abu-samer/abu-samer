@@ -32,14 +32,9 @@ def clean_text(text):
     text = re.sub(r'\s+', ' ', text).strip()
 
     if original_text != text:
-        print("🧹 بعد التنظيف:", text[:60])
-    return text
-
-async def update_news():
+     async def update_news():
     # هنا منعنا الطلب يدوي للرقم
-await client.start()
-
-
+    await client.start()
 
     while True:
         all_messages = []
