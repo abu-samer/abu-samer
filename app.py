@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify
 import csv
 import threading
 import asyncio
+asyncio.run(update_news())
 import update_news  # استورد ملفك الجديد
 
 app = Flask(__name__)
