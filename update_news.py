@@ -6,7 +6,7 @@ import re
 
 api_id = 21447109
 api_hash = 'fd29bf548f7484cb35925187b61d56b5'
-channel_ids = [-1001989491822, -1001147552061,-1002253053676 ]
+channel_ids = [-1001989491822, -1001147552061, -1002253053676]
 
 bad_phrases = [
     "** •┈┈┈┈┈┈┈┈┈┈┈• ✈️@Nabuls_News",
@@ -36,7 +36,8 @@ def clean_text(text):
     return text
 
 async def update_news():
-    await client.start()
+    # هنا منعنا الطلب يدوي للرقم
+    await client.start(phone=lambda: None)
     while True:
         all_messages = []
         for channel_id in channel_ids:
