@@ -37,7 +37,8 @@ def clean_text(text):
 
 async def update_news():
     # هنا منعنا الطلب يدوي للرقم
-await client.start(phone=lambda: None)
+await client.start()
+
 
 
     while True:
