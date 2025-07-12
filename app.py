@@ -2,8 +2,7 @@ from flask import Flask, render_template, jsonify
 import csv
 import threading
 import asyncio
-asyncio.run(update_news())
-import update_news  # استورد ملفك الجديد
+import update_news  # تأكد إنه ملف اسمه update_news.py وفيه الدالة update()
 
 app = Flask(__name__)
 
@@ -34,4 +33,5 @@ if __name__ == '__main__':
     updater_thread = threading.Thread(target=run_updater, daemon=True)
     updater_thread.start()
 
+    # شغل السيرفر
     app.run(host='0.0.0.0', port=5000)
