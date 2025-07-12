@@ -2,7 +2,7 @@ from flask import Flask, render_template, jsonify
 import csv
 import threading
 import asyncio
-import update_news  # تأكد إنه ملف اسمه update_news.py وفيه الدالة update()
+import update_news  # استورد الملف فقط
 
 app = Flask(__name__)
 
@@ -29,9 +29,6 @@ def run_updater():
     loop.run_until_complete(update_news.update())
 
 if __name__ == '__main__':
-    # شغل التحديث في خيط مستقل
     updater_thread = threading.Thread(target=run_updater, daemon=True)
     updater_thread.start()
-
-    # شغل السيرفر
     app.run(host='0.0.0.0', port=5000)
