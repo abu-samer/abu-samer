@@ -6,7 +6,7 @@ import re
 
 api_id = 21447109
 api_hash = 'fd29bf548f7484cb35925187b61d56b5'
-channel_ids = [-1001989491822, -1001147552061, -1002253053676]
+channel_ids = [-1001989491822, -1001147552061,-1002253053676 ]
 
 bad_phrases = [
     "** •┈┈┈┈┈┈┈┈┈┈┈• ✈️@Nabuls_News",
@@ -35,7 +35,7 @@ def clean_text(text):
         print("🧹 بعد التنظيف:", text[:60])
     return text
 
-async def update():
+async def update_news():
     await client.start()
     while True:
         all_messages = []
@@ -57,4 +57,6 @@ async def update():
                 writer.writerow([date_str, msg['message']])
 
         print("✅ تم تحديث الملف بدون روابط ولا يوزرات 👌")
-        await asyncio.sleep(60)  # عدل الوقت على كيفك
+        await asyncio.sleep(1)
+
+asyncio.run(update_news())
