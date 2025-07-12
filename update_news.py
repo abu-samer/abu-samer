@@ -38,6 +38,7 @@ def clean_text(text):
 async def update_news():
     # هنا منعنا الطلب يدوي للرقم
     await client.start(phone=lambda: None)
+
     while True:
         all_messages = []
         for channel_id in channel_ids:
