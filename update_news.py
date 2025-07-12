@@ -32,9 +32,19 @@ def clean_text(text):
     text = re.sub(r'\s+', ' ', text).strip()
 
     if original_text != text:
-     async def update_news():
+    print("🧹 نص مختلف، بنعمل شيء هنا")  # أو أي أكشن بدك إياه
+
+async def update_news():
     # هنا منعنا الطلب يدوي للرقم
     await client.start()
+
+    while True:
+        all_messages = []
+        # هنا تكمل كودك جوه while
+        # مثال:
+        print("✅ البوت شغال وبحدث الأخبار...")
+        break  # بس عشان ما تصير لوب لا نهائي أثناء التجربة
+
 
     while True:
         all_messages = []
