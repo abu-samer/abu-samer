@@ -1,15 +1,14 @@
 from flask import Flask, render_template, jsonify
 import csv
-import os
+import threading
+import asyncio
+import update_news  # استورد ملفك الجديد
 
 app = Flask(__name__)
 
 def read_news():
     news = []
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(base_dir, 'news.csv')
-
-    with open(file_path, encoding='utf-8') as f:
+    with open('news.csv', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
             news.append(row['message'])
@@ -24,6 +23,14 @@ def api_news():
     news = read_news()
     return jsonify(news)
 
+def run_updater():
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(update_news.update())
+
 if __name__ == '__main__':
-    print("🔵 Flask شغّال...")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # شغل التحديث في خيط مستقل
+    updater_thread = threading.Thread(target=run_updater, daemon=True)
+    updater_thread.start()
+
+    app.run(host='0.0.0.0', port=5000)
