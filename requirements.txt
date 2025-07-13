@@ -1,6 +1,6 @@
-
-Flask==3.0.0
-telethon==1.34.0
-gunicorn==21.2.0
-google
-
+telethon
+google-api-python-client
+google-auth
+google-auth-httplib2
+google-auth-oauthlib
+flask
