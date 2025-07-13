@@ -1,17 +1,29 @@
 from flask import Flask, render_template, jsonify
-import csv
-import threading
-import asyncio
-import update_news  # استورد الملف فقط
+from google.oauth2.service_account import Credentials
+from googleapiclient.discovery import build
 
 app = Flask(__name__)
 
+SERVICE_ACCOUNT_FILE = 'path/to/your/service-account-file.json'
+SPREADSHEET_ID = 'معرف_ملف_الجوجل_شيت_هنا'
+SHEET_NAME = 'Sheet1'
+
+def sheets_service():
+    credentials = Credentials.from_service_account_file(
+        SERVICE_ACCOUNT_FILE,
+        scopes=['https://www.googleapis.com/auth/spreadsheets.readonly']
+    )
+    service = build('sheets', 'v4', credentials=credentials)
+    return service.spreadsheets()
+
 def read_news():
+    sheets = sheets_service()
+    result = sheets.values().get(spreadsheetId=SPREADSHEET_ID, range=SHEET_NAME).execute()
+    values = result.get('values', [])
     news = []
-    with open('news.csv', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            news.append(row['message'])
+    for row in values[1:]:  # تخطى العنوان
+        if len(row) >= 2:
+            news.append(row[1])
     return news
 
 @app.route('/')
@@ -23,12 +35,5 @@ def api_news():
     news = read_news()
     return jsonify(news)
 
-def run_updater():
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(update_news.update())
-
 if __name__ == '__main__':
-    updater_thread = threading.Thread(target=run_updater, daemon=True)
-    updater_thread.start()
     app.run(host='0.0.0.0', port=5000)
