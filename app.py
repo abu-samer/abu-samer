@@ -15,7 +15,7 @@ SHEET_NAME = 'Sheet1'
 # متغيرات الكاش
 cached_news = None
 last_update_time = 0
-CACHE_DURATION = 300  # 300 ثانية = 5 دقائق
+CACHE_DURATION = 2  # 300 ثانية = 5 دقائق
 
 def sheets_service():
     credentials = Credentials.from_service_account_info(
