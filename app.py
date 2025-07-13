@@ -4,7 +4,7 @@ from googleapiclient.discovery import build
 
 app = Flask(__name__)
 
-SERVICE_ACCOUNT_FILE = 'src/newsupdater-465801-9d1c3cb06279.json'
+SERVICE_ACCOUNT_FILE = 'src/newsupdater-465801-552c8fd035c5.json'
 SPREADSHEET_ID = '1kNO7lNC5uC9PYRsE-vk8OZypQxnbZFI0evOVfWYdGsE'
 SHEET_NAME = 'Sheet1'
 
