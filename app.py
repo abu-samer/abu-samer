@@ -5,7 +5,7 @@ from googleapiclient.discovery import build
 app = Flask(__name__)
 
 SERVICE_ACCOUNT_FILE = 'src/newsupdater-465801-9d1c3cb06279.json'
-SPREADSHEET_ID = 'معرف_ملف_الجوجل_شيت_هنا'
+SPREADSHEET_ID = '1kNO7lNC5uC9PYRsE-vk8OZypQxnbZFI0evOVfWYdGsE'
 SHEET_NAME = 'Sheet1'
 
 def sheets_service():
