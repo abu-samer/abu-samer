@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini POS - الأخضر العصري</title>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+body { font-family: 'Segoe UI', sans-serif; margin:0; background: #e8f5e9;}
+.header { background: linear-gradient(90deg,#43a047,#66bb6a); color:white; padding:15px; text-align:center; font-size:1.5em; font-weight:bold; box-shadow:0 3px 6px rgba(0,0,0,0.2);}
+.buttons { display:flex; flex-wrap:wrap; padding:10px; background:white; box-shadow:0 1px 4px rgba(0,0,0,0.1); gap:5px; justify-content: center;}
+button { flex:1 1 30%; margin:5px; padding:12px; border:none; border-radius:12px; background:#43a047; color:white; font-weight:bold; cursor:pointer; transition: transform 0.2s, background 0.2s; display:flex; justify-content:center; align-items:center; gap:5px;}
+button:hover { background:#2e7d32; transform:translateY(-2px);}
+#products { padding:10px; max-height:50vh; overflow-y:auto;}
+.item { display:flex; align-items:center; background:white; margin-bottom:12px; padding:10px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1); position:relative; transition: transform 0.2s;}
+.item:hover { transform:translateX(3px);}
+.item img { width:60px; margin-left:10px; border-radius:8px;}
+.delete-btn { position:absolute; right:10px; top:10px; background:#e53935; border:none; color:white; border-radius:50%; width:28px; height:28px; font-weight:bold; cursor:pointer; transition: transform 0.2s;}
+.delete-btn:hover { transform:scale(1.2);}
+#totalBar { position:fixed; bottom:0; width:100%; background:#43a047; color:white; padding:15px; text-align:center; font-weight:bold; font-size:1.2em; box-shadow:0 -3px 6px rgba(0,0,0,0.2);}
+.modal { display:none; position:fixed; z-index:10; left:0; top:0; width:100%; height:100%; background-color: rgba(0,0,0,0.4);}
+.modal-content { background:#f1f8f3; margin:5% auto; padding:20px; border-radius:12px; width:90%; max-width:400px; box-shadow:0 3px 6px rgba(0,0,0,0.3); max-height:90vh; overflow-y:auto;}
+.modal input, .modal button { width:100%; padding:8px; margin:6px 0; border-radius:6px; border:1px solid #ccc; box-sizing:border-box;}
+.modal button { background:#43a047; color:white; font-weight:bold; cursor:pointer;}
+.modal button:hover { background:#2e7d32;}
+#previewContainer { max-height:300px; overflow:auto; margin-top:10px; border:1px solid #ccc; border-radius:8px; display:flex; justify-content:center; align-items:center; flex-direction:column; position:relative;}
+#preview { max-width:100%; max-height:100%; border-radius:8px;}
+#calcToggle { position: fixed; right: 10px; bottom: 80px; width: 50px; height: 50px; border-radius: 50%; background:#43a047; border:none; color:white; font-size:1.5em; cursor:pointer; z-index:1000;}
+#calculator { position: fixed; right: 10px; bottom: 140px; background: #66bb6a; border-radius: 12px; padding: 8px; width: 140px; box-shadow: 0 3px 8px rgba(0,0,0,0.3); display: none; z-index: 999;}
+#calcClose { position: absolute; top: -10px; right: -10px; width: 24px; height: 24px; background: #e53935; border-radius: 50%; color: white; font-weight: bold; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 0.8em; z-index: 1000;}
+#calcScreen { width:100%; height:35px; background:white; border-radius:8px; margin-bottom:6px; text-align:right; padding:5px; font-weight:bold; font-size:1em;}
+#calcButtons { display:flex; flex-wrap:wrap; gap:4px;}
+.calc-btn { width:30%; margin:2% 0; padding:8px; border:none; border-radius:8px; background:#43a047; color:white; font-weight:bold; cursor:pointer;}
+.calc-btn:hover { background:#2e7d32; transform:translateY(-1px);}
+.calc-btn:active { transform:translateY(1px); }
+#btnExportDB, #btnImportDB { position: fixed; top:5px; width:36px; height:36px; border-radius:50%; background:#43a047; color:white; border:none; font-size:1.2em; opacity:0.3; cursor:pointer; z-index:10000;}
+#btnImportDB { right:50px; }
+#btnExportDB { right:5px; }
+#btnExportDB:hover, #btnImportDB:hover { opacity:1; }
+</style>
+</head>
+<body>
+
+<div class="header">نظام البيع العصري</div>
+<div class="buttons">
+  <button id="btnScan" disabled><i class="fa-solid fa-camera"></i> مسح باركود</button>
+  <button id="btnAdd" disabled><i class="fa-solid fa-plus"></i> إضافة منتج</button>
+  <button onclick="checkout()"><i class="fa-solid fa-check"></i> إنهاء الفاتورة</button>
+  <button id="btnDB" disabled><i class="fa-solid fa-database"></i> قاعدة البيانات</button>
+</div>
+
+<button id="btnExportDB" title="تصدير Database">💾</button>
+<input type="file" id="btnImportDB" title="استيراد Database" accept=".json"/>
+
+<div id="reader"></div>
+<div id="products"></div>
+<div id="totalBar">المجموع: 0</div>
+
+<div id="modalAdd" class="modal">
+  <div class="modal-content">
+    <h3>إضافة / تعديل منتج</h3>
+    <input id="modalBarcode" placeholder="باركود">
+    <input id="modalName" placeholder="اسم المنتج">
+    <input id="modalPrice" placeholder="السعر">
+    <button id="btnCapture"><i class="fa-solid fa-camera"></i> تصوير المنتج مباشرة</button>
+    <div id="previewContainer">
+      <img id="preview" src="">
+    </div>
+    <button id="modalSave">حفظ المنتج</button>
+    <button onclick="closeModal()">إلغاء</button>
+  </div>
+</div>
+
+<div id="modalDB" class="modal">
+  <div class="modal-content">
+    <h3>قاعدة البيانات</h3>
+    <div id="dbList"></div>
+    <button onclick="closeDB()">إغلاق</button>
+  </div>
+</div>
+
+<div id="modalInvoice" class="modal">
+  <div class="modal-content">
+    <h3>💰 الفاتورة</h3>
+    <div id="invoiceList"></div>
+    <p id="invoiceTotal" style="font-weight:bold;font-size:1.2em;"></p>
+    <button onclick="closeInvoice()">OK</button>
+  </div>
+</div>
+
+<button id="calcToggle">🖩</button>
+<div id="calculator">
+  <button id="calcClose">×</button>
+  <div id="calcScreen">0</div>
+  <div id="calcButtons">
+    <button class="calc-btn">1</button><button class="calc-btn">2</button><button class="calc-btn">3</button>
+    <button class="calc-btn">4</button><button class="calc-btn">5</button><button class="calc-btn">6</button>
+    <button class="calc-btn">7</button><button class="calc-btn">8</button><button class="calc-btn">9</button>
+    <button class="calc-btn">0</button><button class="calc-btn" id="calcClear">C</button><button class="calc-btn" id="calcOK">OK</button>
+  </div>
+</div>
+
+<script>
+let beepSound = new Audio('beep.mp3');   
+beepSound.volume = 0.3;
+
+let db, productsDB={}, cart=[], capturedImg="";
+
+// ===== IndexedDB =====
+let request = indexedDB.open("MiniPOS_DB",1);
+request.onupgradeneeded = e => { db = e.target.result; if(!db.objectStoreNames.contains("products")) db.createObjectStore("products",{keyPath:"barcode"}); };
+request.onsuccess = e => { db = e.target.result; loadProductsFromDB(()=>{ document.getElementById("btnScan").disabled=false; document.getElementById("btnAdd").disabled=false; document.getElementById("btnDB").disabled=false; });};
+request.onerror = e => alert("خطأ بفتح قاعدة البيانات");
+
+function saveProductToDB(product){ db.transaction("products","readwrite").objectStore("products").put(product); }
+function deleteProductFromDB(barcode){ db.transaction("products","readwrite").objectStore("products").delete(barcode);}
+function loadProductsFromDB(callback){ let tx=db.transaction("products","readonly"); let store=tx.objectStore("products"); let req=store.getAll(); req.onsuccess=()=>{ productsDB={}; req.result.forEach(p=>productsDB[p.barcode]=p); if(callback) callback(); }; }
+
+// ===== UI =====
+function updateTotal(){ let total=cart.reduce((s,p)=>s+p.price,0); document.getElementById("totalBar").innerText="المجموع: "+total; }
+function addProduct(product){ cart.push(product); let div=document.createElement("div"); div.className="item"; div.innerHTML=`<img src="${product.img}"><div><p><b>${product.name}</b></p><p>${product.price} شيكل</p></div><button class="delete-btn" onclick="removeProduct(this, ${cart.length-1})">×</button>`; document.getElementById("products").appendChild(div); beepSound.play(); updateTotal();}
+function removeProduct(btn,index){ cart.splice(index,1); btn.parentElement.remove(); updateTotal(); }
+
+// ===== Barcode =====
+function startScanner(){ document.getElementById("reader").innerHTML=""; let scanner=new Html5Qrcode("reader"); scanner.start({facingMode:"environment"},{fps:20,qrbox:300},text=>{ scanner.stop(); if(productsDB[text]) addProduct(productsDB[text]); else if(confirm("المنتج غير موجود، تضيفه؟")) openModal(text); }).catch(()=>alert("📷 السماح بالكاميرا ضروري")); }
+
+// ===== Modal Add =====
+let modal=document.getElementById("modalAdd");
+function openModal(barcode=""){ modal.style.display="block"; document.getElementById("modalBarcode").value=barcode; capturedImg=""; document.getElementById("preview").src=""; }
+function closeModal(){ modal.style.display="none"; }
+
+document.getElementById("modalSave").onclick=()=>{
+  let barcode=document.getElementById("modalBarcode").value;
+  let name=document.getElementById("modalName").value;
+  let price=parseFloat(document.getElementById("modalPrice").value);
+  let img=capturedImg || "https://via.placeholder.com/80";
+  if(!barcode||!name||isNaN(price)){ alert("أكمل كل الحقول"); return; }
+  let product={barcode,name,price,img};
+  saveProductToDB(product); productsDB[barcode]=product; addProduct(product);
+  document.getElementById("modalBarcode").value=""; document.getElementById("modalName").value=""; document.getElementById("modalPrice").value=""; capturedImg=""; document.getElementById("preview").src="";
+  closeModal();
+}
+
+// ===== Camera Capture =====
+document.getElementById("btnCapture").onclick = function() {
+  navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}})
+  .then(stream=>{
+    let video=document.createElement("video"); video.style.width="100%"; video.srcObject=stream; video.play();
+    let container=document.getElementById("previewContainer"); container.appendChild(video);
+
+    let captureBtn=document.createElement("button"); 
+    captureBtn.textContent="📸";
+    captureBtn.style.cssText="position:absolute; bottom:10px; left:50%; transform:translateX(-50%); padding:10px; border-radius:50%; background:#43a047; color:white; border:none; font-size:1.2em; cursor:pointer; z-index:1000;";
+    container.style.position="relative"; container.appendChild(captureBtn);
+
+    captureBtn.onclick=function(){
+      let canvas=document.createElement("canvas"); canvas.width=video.videoWidth; canvas.height=video.videoHeight;
+      canvas.getContext("2d").drawImage(video,0,0);
+      capturedImg=canvas.toDataURL("image/png");
+
+      let preview=document.getElementById("preview");
+      if(!preview){ preview=document.createElement("img"); preview.id="preview"; container.appendChild(preview); }
+      preview.src=capturedImg;
+
+      stream.getTracks().forEach(track=>track.stop());
+      video.remove(); captureBtn.remove();
+    }
+  }).catch(()=>alert("📷 السماح بالكاميرا ضروري"));
+}
+
+// ===== DB Modal =====
+document.getElementById("btnAdd").onclick=()=>openModal();
+document.getElementById("btnScan").onclick=startScanner;
+document.getElementById("btnDB").onclick=showDB;
+
+function showDB(){ let dbList=document.getElementById("dbList"); dbList.innerHTML=""; Object.keys(productsDB).forEach(bar=>{ let p=productsDB[bar]; let div=document.createElement("div"); div.style.display="flex"; div.style.justifyContent="space-between"; div.style.marginBottom="6px"; div.innerHTML=`<span>${bar} - ${p.name} - ${p.price} شيكل</span> <button onclick="deleteDB('${bar}')">حذف</button>`; dbList.appendChild(div); }); document.getElementById("modalDB").style.display="block";}
+function closeDB(){ document.getElementById("modalDB").style.display="none";}
+function deleteDB(bar){ delete productsDB[bar]; deleteProductFromDB(bar); showDB(); }
+
+// ===== Checkout =====
+function checkout(){ if(cart.length===0){alert("لا يوجد منتجات"); return;} let invoiceList=document.getElementById("invoiceList"); invoiceList.innerHTML=""; cart.forEach(p=>{ let div=document.createElement("div"); div.style.display="flex"; div.style.justifyContent="space-between"; div.style.marginBottom="5px"; div.innerHTML=`<span>${p.name}</span><span>${p.price} شيكل</span>`; invoiceList.appendChild(div); }); document.getElementById("invoiceTotal").innerText="المجموع: "+cart.reduce((s,p)=>s+p.price,0); document.getElementById("modalInvoice").style.display="block"; cart=[]; document.getElementById("products").innerHTML=""; updateTotal();}
+function closeInvoice(){ document.getElementById("modalInvoice").style.display="none"; }
+
+// ===== Calculator =====
+let calcScreen=document.getElementById("calcScreen"); let currentInput="";
+document.querySelectorAll(".calc-btn").forEach(btn=>{ btn.onclick=()=>{ let val=btn.textContent; if(val=="C"){ currentInput=""; calcScreen.textContent="0"; } else if(val=="OK"){ let num=parseFloat(currentInput); if(!isNaN(num)){ addProduct({name:"منتج يدوي", price:num, img:"https://via.placeholder.com/60"}); } currentInput=""; calcScreen.textContent="0"; } else{ currentInput+=val; calcScreen.textContent=currentInput; }}});
+
+document.getElementById("calcToggle").onclick=()=>{ document.getElementById("calculator").style.display="block"; };
+document.getElementById("calcClose").onclick=()=>{ document.getElementById("calculator").style.display="none"; };
+
+// ===== Export / Import =====
+document.getElementById("btnExportDB").onclick=()=>{
+  let data=Object.values(productsDB); let blob=new Blob([JSON.stringify(data)],{type:"application/json"}); let url=URL.createObjectURL(blob); let a=document.createElement("a"); a.href=url; a.download="products.json"; a.click(); URL.revokeObjectURL(url);
+};
+document.getElementById("btnImportDB").onchange=e=>{
+  let file=e.target.files[0]; if(!file) return; let reader=new FileReader();
+  reader.onload=ev=>{
+    let arr=JSON.parse(ev.target.result);
+    arr.forEach(p=>{ saveProductToDB(p); productsDB[p.barcode]=p; });
+    alert("تم استيراد قاعدة البيانات");
+  };
+  reader.readAsText(file);
+};
+</script>
+</body>
+</html>
